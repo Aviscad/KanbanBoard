@@ -20,6 +20,12 @@ namespace KanbanBoard.DataAccess.Repositories
             _dbSet.Add(entity);
         }
 
+        public async Task<T> AddAsync(T entity)
+        {
+           await _dbSet.AddAsync(entity);
+            return entity;
+        }
+
         public void AddRange(IEnumerable<T> entities)
         {
             _dbSet.AddRange(entities);
@@ -35,10 +41,17 @@ namespace KanbanBoard.DataAccess.Repositories
             return _dbSet.ToList();
         }
 
-        public T GetById(int id)
+        public async Task<IEnumerable<T>> GetAllAsync()
+        {
+            return await _dbSet.ToListAsync();
+        }
+
+        public T? GetById(int id)
         {
             return _dbSet.Find(id);
         }
+
+        public async Task<T> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
 
         public void Remove(T entity)
         {

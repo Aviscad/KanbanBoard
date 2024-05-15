@@ -38,5 +38,11 @@ namespace KanbanBoard.DataAccess.Repositories
         {
             return _context.SaveChanges();
         }
+
+        public async Task<bool> SaveAsync()
+        {
+            int count = await _context.SaveChangesAsync();
+            return count> 0;
+        }
     }
 }

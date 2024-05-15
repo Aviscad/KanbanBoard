@@ -13,5 +13,6 @@ namespace KanbanBoard.Domain.Interfaces
         ITaskRepository Task { get; }
         ISubTaskRepository SubTask { get; }
         int Save();
+        Task<bool> SaveAsync();
     }
 }
