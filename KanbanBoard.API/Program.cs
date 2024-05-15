@@ -1,4 +1,6 @@
 using KanbanBoard.DataAccess.Data;
+using KanbanBoard.DataAccess.Repositories;
+using KanbanBoard.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<KanbanDbContext>(options => {
     options.UseSqlServer(builder.Configuration.GetConnectionString("KanbanConnection"));
 });
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
