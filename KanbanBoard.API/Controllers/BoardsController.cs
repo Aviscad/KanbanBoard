@@ -20,7 +20,8 @@ namespace KanbanBoard.API.Controllers
         [HttpGet]
         public IActionResult Get() {
             var boards = _unitOfWork.Board
-                .GetAllIncludes();
+                .GetAllIncludes()
+                .ToSimplifiedBoardList();
             return Ok(boards);
         }
 

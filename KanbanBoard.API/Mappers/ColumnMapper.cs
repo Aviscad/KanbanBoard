@@ -14,9 +14,9 @@ namespace KanbanBoard.API.Mappers
                 Tasks = column.Tasks,
             };
         }
-        public static SelectColumnDto ToSelectDto(this Column column)
+        public static SimplifiedColumn ToSimplifiedColumn(this Column column)
         {
-            return new SelectColumnDto
+            return new SimplifiedColumn
             {
                 ColumnId = column.ColumnId,
                 Name = column.Name,

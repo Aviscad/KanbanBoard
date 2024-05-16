@@ -2,10 +2,10 @@
 
 namespace KanbanBoard.API.Models.Boards
 {
-    public class BoardColumnsDto
+    public class SimplifiedBoard
     {
         public int BoardId { get; set; }
         public string Name { get; set; } = string.Empty;
-        public IEnumerable<SelectColumnDto>? Columns { get; set; }
+        public IEnumerable<SimplifiedColumn> Columns { get; set; } = new List<SimplifiedColumn>();
     }
 }
