@@ -62,5 +62,11 @@ namespace KanbanBoard.DataAccess.Repositories
         {
             _dbSet.RemoveRange(entities);
         }
+
+        public void Update(T entity)
+        {
+            _dbSet.Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+        }
     }
 }

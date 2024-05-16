@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace KanbanBoard.Domain.Interfaces
+﻿namespace KanbanBoard.Domain.Interfaces
 {
     public interface IUnitOfWork : IDisposable
     {
@@ -13,6 +7,6 @@ namespace KanbanBoard.Domain.Interfaces
         ITaskRepository Task { get; }
         ISubTaskRepository SubTask { get; }
         int Save();
-        Task<bool> SaveAsync();
+        Task SaveAsync();
     }
 }

@@ -1,10 +1,5 @@
 ﻿using KanbanBoard.DataAccess.Data;
 using KanbanBoard.Domain.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace KanbanBoard.DataAccess.Repositories
 {
@@ -39,10 +34,9 @@ namespace KanbanBoard.DataAccess.Repositories
             return _context.SaveChanges();
         }
 
-        public async Task<bool> SaveAsync()
+        public async Task SaveAsync()
         {
-            int count = await _context.SaveChangesAsync();
-            return count> 0;
+            await _context.SaveChangesAsync();
         }
     }
 }

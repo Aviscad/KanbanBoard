@@ -36,10 +36,38 @@ namespace KanbanBoard.API.Controllers
         {
             if(boardDto == null) return BadRequest();
 
-            var boardModel = boardDto.ToCreateBoardDto();
+            var boardModel = boardDto.ToBoard();
             await _unitOfWork.Board.AddAsync(boardModel);
             await _unitOfWork.SaveAsync();
             return CreatedAtAction(nameof(GetById), new { id = boardModel.BoardId }, boardModel.ToBoardDto());
+        }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBoardDto boardDto)
+        {
+            var boardModel = await _unitOfWork.Board.GetByIdAsync(id);
+            if( boardModel == null) return BadRequest();
+
+            boardModel.Name = boardDto.Name;
+
+            _unitOfWork.Board.Update(boardModel);
+            await _unitOfWork.SaveAsync();
+            return Ok(boardModel);
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            if(id<=0) return BadRequest();
+            var boardModel = await _unitOfWork.Board.GetByIdAsync(id);
+
+            if (boardModel == null) return NotFound();
+
+            _unitOfWork.Board.Remove(boardModel);
+            await _unitOfWork.SaveAsync();
+            return Ok();
         }
 
     }

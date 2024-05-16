@@ -14,19 +14,11 @@ namespace KanbanBoard.API.Mappers
                 Columns = (List<Column>)board.Columns
             };
         }
-        public static Board ToCreateBoardDto(this CreateBoardDto createBoardDto)
+        public static Board ToBoard(this CreateBoardDto createBoardDto)
         {
             return new Board
             {
                 Name = createBoardDto.Name,
-            };
-        }
-
-        public static Board ToUpdateBoardDto(this UpdateBoardDto updateBoardDto)
-        {
-            return new Board
-            {
-                Name = updateBoardDto.Name
             };
         }
 
