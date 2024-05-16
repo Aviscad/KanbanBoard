@@ -33,7 +33,6 @@ namespace KanbanBoard.API.Controllers
             return Ok(board);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBoardDto boardDto)
         {
@@ -42,7 +41,7 @@ namespace KanbanBoard.API.Controllers
             var boardModel = boardDto.ToBoard();
             await _unitOfWork.Board.AddAsync(boardModel);
             await _unitOfWork.SaveAsync();
-            return CreatedAtAction(nameof(GetById), new { id = boardModel.BoardId }, boardModel.ToBoardDto());
+            return CreatedAtAction(nameof(GetById), new { id = boardModel.BoardId }, boardModel.ToSimplifiedBoard());
         }
 
         [HttpPut]
@@ -70,7 +69,7 @@ namespace KanbanBoard.API.Controllers
 
             _unitOfWork.Board.Remove(boardModel);
             await _unitOfWork.SaveAsync();
-            return Ok();
+            return NoContent();
         }
 
     }
