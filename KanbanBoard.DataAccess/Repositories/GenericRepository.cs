@@ -51,7 +51,7 @@ namespace KanbanBoard.DataAccess.Repositories
             return _dbSet.Find(id);
         }
 
-        public async Task<T> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
+        public async Task<T?> GetByIdAsync(int id) => await _dbSet.FindAsync(id);
 
         public void Remove(T entity)
         {

@@ -2,6 +2,7 @@
 using KanbanBoard.API.Models.Boards;
 using KanbanBoard.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace KanbanBoard.API.Controllers
 {
@@ -17,8 +18,9 @@ namespace KanbanBoard.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get() { 
-            var boards = _unitOfWork.Board.GetAll();
+        public IActionResult Get() {
+            var boards = _unitOfWork.Board
+                .GetAllIncludes();
             return Ok(boards);
         }
 

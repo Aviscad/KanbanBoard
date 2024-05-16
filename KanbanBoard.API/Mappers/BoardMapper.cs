@@ -1,4 +1,5 @@
 ﻿using KanbanBoard.API.Models.Boards;
+using KanbanBoard.API.Models.Columns;
 using KanbanBoard.Domain.Entities;
 
 namespace KanbanBoard.API.Mappers
@@ -21,6 +22,5 @@ namespace KanbanBoard.API.Mappers
                 Name = createBoardDto.Name,
             };
         }
-
     }
 }
