@@ -1,5 +1,8 @@
 ﻿using KanbanBoard.DataAccess.Data;
+using KanbanBoard.Domain.Entities;
 using KanbanBoard.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Task = KanbanBoard.Domain.Entities.Task;
 
 namespace KanbanBoard.DataAccess.Repositories
 {
@@ -7,6 +10,11 @@ namespace KanbanBoard.DataAccess.Repositories
     {
         public TaskRepository(KanbanDbContext context) : base(context)
         {
+        }
+
+        public IEnumerable<Task> GetAllIncludes()
+        {
+            return _context.Tasks.Include(t => t.Column).ToList();
         }
     }
 }
