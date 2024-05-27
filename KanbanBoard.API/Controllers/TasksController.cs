@@ -9,7 +9,7 @@ namespace KanbanBoard.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TasksController : Controller
+    public class TasksController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -31,11 +31,10 @@ namespace KanbanBoard.API.Controllers
         [Route("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
-            var task = _unitOfWork.Task
-                .GetOneIncludes(id)
-                .ToSimplifiedTask();
+            var task = _unitOfWork.Task.GetOneIncludes(id);
+                
             if (task == null) return NotFound();
-            return Ok(task);
+            return Ok(task.ToSimplifiedTask());
         }
 
         [HttpPost]

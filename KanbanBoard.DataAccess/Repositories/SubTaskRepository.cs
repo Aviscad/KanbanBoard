@@ -1,6 +1,7 @@
 ﻿using KanbanBoard.DataAccess.Data;
 using KanbanBoard.Domain.Entities;
 using KanbanBoard.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace KanbanBoard.DataAccess.Repositories
 {
@@ -12,12 +13,12 @@ namespace KanbanBoard.DataAccess.Repositories
 
         public IEnumerable<SubTask> GetAllIncludes()
         {
-            throw new NotImplementedException();
+            return _context.SubTasks.Include(st => st.Task).ToList();
         }
 
         public SubTask? GetOneIncludes(int id)
         {
-            throw new NotImplementedException();
+            return _context.SubTasks.Include(st => st.Task).FirstOrDefault(st => st.SubTaskId == id);
         }
     }
 }
