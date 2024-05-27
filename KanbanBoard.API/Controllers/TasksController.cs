@@ -28,9 +28,9 @@ namespace KanbanBoard.API.Controllers
         [Route("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
-            var task = _unitOfWork.Task.GetById(id);
+            var task = _unitOfWork.Task.GetOneIncludes(id);
             if (task == null) return NotFound();
-            return Ok(task);
+            return Ok(task.ToSimplifiedTask());
         }
 
         [HttpPost]

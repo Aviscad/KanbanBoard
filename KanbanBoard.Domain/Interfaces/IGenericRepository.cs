@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using KanbanBoard.Domain.Entities;
+using System.Linq.Expressions;
 
 namespace KanbanBoard.Domain.Interfaces
 {

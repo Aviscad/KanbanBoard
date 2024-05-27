@@ -1,4 +1,6 @@
-﻿using KanbanBoard.API.Models.Columns;
+﻿using KanbanBoard.API.Models.Boards;
+using KanbanBoard.API.Models.Columns;
+using KanbanBoard.API.Models.Tasks;
 using KanbanBoard.Domain.Entities;
 
 namespace KanbanBoard.API.Mappers
@@ -20,7 +22,34 @@ namespace KanbanBoard.API.Mappers
             {
                 ColumnId = column.ColumnId,
                 Name = column.Name,
+                Tasks = column.Tasks.Select(c =>
+                    new SimplifiedTask
+                    {
+                        TaskId = c.TaskId,
+                        Title = c.Title,
+                        Description = c.Description,
+                        ColumnId = column.ColumnId,
+                        ColumnName = column.Name,
+                    })
             };
+        }
+
+        public static List<SimplifiedColumn> ToSimplifiedColumnList(this IEnumerable<Column> columns)
+        {
+            return columns.Select(column => new SimplifiedColumn
+            {
+                ColumnId = column.ColumnId,
+                Name= column.Name,  
+                Tasks = column.Tasks.Select(c =>
+                    new SimplifiedTask
+                    {
+                        TaskId = c.TaskId,
+                        Title = c.Title,
+                        Description = c.Description,
+                        ColumnId = column.ColumnId,
+                        ColumnName = column.Name,
+                    })
+            }).ToList();
         }
 
         public static Column ToColumn(this CreateColumnDto createColumnDto)

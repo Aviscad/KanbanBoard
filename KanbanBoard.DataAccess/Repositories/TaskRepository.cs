@@ -16,5 +16,10 @@ namespace KanbanBoard.DataAccess.Repositories
         {
             return _context.Tasks.Include(t => t.Column).ToList();
         }
+
+        public Task? GetOneIncludes(int id)
+        {
+            return _context.Tasks.Include(t => t.Column).FirstOrDefault(t => t.TaskId == id);
+        }
     }
 }

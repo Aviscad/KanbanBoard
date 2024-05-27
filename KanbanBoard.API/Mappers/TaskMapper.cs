@@ -28,7 +28,6 @@ namespace KanbanBoard.API.Mappers
                 ColumnId = task.ColumnId,
                 ColumnName = task.Column.Name, 
                 SubTasks = task.SubTasks.ToList()
-                
             };
         }
 
@@ -42,7 +41,6 @@ namespace KanbanBoard.API.Mappers
                 ColumnId = task.ColumnId,
                 ColumnName = task.Column.Name,
                 SubTasks = task.SubTasks.ToList()
-
             }).ToList();
         }
 

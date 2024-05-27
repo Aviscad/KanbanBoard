@@ -9,5 +9,15 @@ namespace KanbanBoard.DataAccess.Repositories
         public SubTaskRepository(KanbanDbContext context) : base(context)
         {
         }
+
+        public IEnumerable<SubTask> GetAllIncludes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public SubTask? GetOneIncludes(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -17,16 +17,19 @@ namespace KanbanBoard.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public IActionResult GetAll()
         {
-            var columns = await _unitOfWork.Column.GetAllAsync();
+            var columns = _unitOfWork.Column
+                .GetAllIncludes()
+                .ToSimplifiedColumnList();
             return Ok(columns);
         }
         [HttpGet]
         [Route("{id:int}")]
-        public async Task<IActionResult> GetById(int id) {
-            var column = await _unitOfWork.Column.GetByIdAsync(id);
-            return column == null ? NotFound() : Ok(column);
+        public IActionResult GetById(int id) {
+            var column = _unitOfWork.Column
+                .GetOneIncludes(id);
+            return column == null ? NotFound() : Ok(column.ToSimplifiedColumn());
         }
 
         [HttpPost]
