@@ -53,5 +53,15 @@ namespace KanbanBoard.API.Mappers
                 Title = createTaskDto.Title,
             };
         }
+
+        public static Task ToTask(this UpdateTaskDto updateTaskDto)
+        {
+            return new Task
+            {
+                ColumnId = updateTaskDto.ColumnId,
+                Description = updateTaskDto.Description,
+                Title = updateTaskDto.Title,
+            };
+        }
     }
 }

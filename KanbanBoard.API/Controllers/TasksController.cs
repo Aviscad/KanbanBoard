@@ -1,5 +1,6 @@
 ﻿using KanbanBoard.API.Mappers;
 using KanbanBoard.API.Models.Boards;
+using KanbanBoard.API.Models.Columns;
 using KanbanBoard.API.Models.Tasks;
 using KanbanBoard.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,9 @@ namespace KanbanBoard.API.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var tasks = _unitOfWork.Task.GetAllIncludes().ToSimplifiedTaskList();
+            var tasks = _unitOfWork.Task
+                .GetAllIncludes()
+                .ToSimplifiedTaskList();
             return Ok(tasks);
         }
 
@@ -28,9 +31,11 @@ namespace KanbanBoard.API.Controllers
         [Route("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
-            var task = _unitOfWork.Task.GetOneIncludes(id);
+            var task = _unitOfWork.Task
+                .GetOneIncludes(id)
+                .ToSimplifiedTask();
             if (task == null) return NotFound();
-            return Ok(task.ToSimplifiedTask());
+            return Ok(task);
         }
 
         [HttpPost]
@@ -42,6 +47,36 @@ namespace KanbanBoard.API.Controllers
             await _unitOfWork.Task.AddAsync(taskModel);
             await _unitOfWork.SaveAsync();
             return CreatedAtAction(nameof(GetById), new { id = taskModel.TaskId }, taskModel.ToTaskDto());
+        }
+
+        [HttpPut]
+        [Route("{id:int}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateTaskDto taskDto) 
+        {
+            var taskModel = await _unitOfWork.Task.GetByIdAsync(id);
+            if (taskModel == null) return NotFound();
+
+            taskModel.Title = taskDto.Title;
+            taskModel.Description = taskDto.Description;
+            taskModel.ColumnId = taskDto.ColumnId;
+
+            _unitOfWork.Task.Update(taskModel);
+            await _unitOfWork.SaveAsync();
+
+            return Ok(taskModel.ToTaskDto());
+        }
+
+        [HttpDelete]
+        [Route("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id) 
+        {
+            var taskModel = await _unitOfWork.Task.GetByIdAsync(id);
+            if(taskModel == null) return NotFound();
+
+            _unitOfWork.Task.Remove(taskModel);
+            await _unitOfWork.SaveAsync();
+
+            return NoContent();
         }
     }
 }

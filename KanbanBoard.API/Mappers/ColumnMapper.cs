@@ -60,5 +60,14 @@ namespace KanbanBoard.API.Mappers
                 BoardId = createColumnDto.BoardId,
             };
         }
+
+        public static Column ToColumn(this UpdateColumnDto updateColumnDto)
+        {
+            return new Column
+            {
+                Name = updateColumnDto.Name,
+                BoardId = updateColumnDto.BoardId,
+            };
+        }
     }
 }
