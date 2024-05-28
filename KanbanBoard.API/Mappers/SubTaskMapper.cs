@@ -1,12 +1,11 @@
 ﻿using KanbanBoard.API.Models.SubTasks;
-using KanbanBoard.API.Models.Tasks;
 using KanbanBoard.Domain.Entities;
 
 namespace KanbanBoard.API.Mappers
 {
     public static class SubTaskMapper
     {
-        public static SubTaskDto ToSubTaskDto(this SubTask subTask) 
+        public static SubTaskDto ToSubTaskDto(this SubTask subTask)
         {
             return new SubTaskDto
             {
@@ -21,9 +20,9 @@ namespace KanbanBoard.API.Mappers
         {
             return new SubTask
             {
-               SubTaskId = subTask.SubTaskId,
-               Name = subTask.Name,
-               Completed = subTask.Completed,
+                SubTaskId = subTask.SubTaskId,
+                Name = subTask.Name,
+                Completed = subTask.Completed,
             };
         }
 
@@ -33,7 +32,7 @@ namespace KanbanBoard.API.Mappers
             {
                 Name = subTask.Name,
                 Completed = subTask.Completed,
-                TaskId = subTask.TaskId,    
+                TaskId = subTask.TaskId,
             };
         }
 
@@ -44,6 +43,19 @@ namespace KanbanBoard.API.Mappers
                 Name = subTask.Name,
                 Completed = subTask.Completed,
             };
+        }
+
+        public static List<SubTaskDto> ToSimplifiedSubTaskDto(this IEnumerable<SubTask> subTasks)
+        {
+            return subTasks.Select(st =>
+             new SubTaskDto
+             {
+                 SubTaskId = st.SubTaskId,
+                 Name = st.Name,
+                 Completed = st.Completed,
+                 TaskId = st.TaskId,
+             }
+            ).ToList();
         }
     }
 }

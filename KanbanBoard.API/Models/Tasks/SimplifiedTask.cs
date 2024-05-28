@@ -1,4 +1,4 @@
-﻿using KanbanBoard.Domain.Entities;
+﻿using KanbanBoard.API.Models.SubTasks;
 
 namespace KanbanBoard.API.Models.Tasks
 {
@@ -9,6 +9,6 @@ namespace KanbanBoard.API.Models.Tasks
         public string Description { get; set; } = string.Empty;
         public int ColumnId { get; set; }
         public string ColumnName { get; set; }
-        public ICollection<SubTask> SubTasks { get; set; } = new List<SubTask>();
+        public ICollection<SubTaskDto> SubTasks { get; set; } = new List<SubTaskDto>();
     }
 }

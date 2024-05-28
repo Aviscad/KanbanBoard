@@ -37,12 +37,7 @@ namespace KanbanBoard.API.Mappers
             {
                 BoardId = board.BoardId,
                 Name = board.Name,
-                Columns = board.Columns.Select(c =>
-                    new SimplifiedColumn
-                    {
-                        ColumnId = c.ColumnId,
-                        Name = c.Name,
-                    })
+                Columns = board.Columns.Select(c => c.ToSimplifiedColumn())
             }).ToList();
         }
 

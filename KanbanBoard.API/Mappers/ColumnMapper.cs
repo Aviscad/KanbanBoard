@@ -1,5 +1,5 @@
-﻿using KanbanBoard.API.Models.Boards;
-using KanbanBoard.API.Models.Columns;
+﻿using KanbanBoard.API.Models.Columns;
+using KanbanBoard.API.Models.SubTasks;
 using KanbanBoard.API.Models.Tasks;
 using KanbanBoard.Domain.Entities;
 
@@ -30,6 +30,14 @@ namespace KanbanBoard.API.Mappers
                         Description = c.Description,
                         ColumnId = column.ColumnId,
                         ColumnName = column.Name,
+                        SubTasks = c.SubTasks.Select(st =>
+                                new SubTaskDto
+                                {
+                                    SubTaskId = st.SubTaskId,
+                                    Name = st.Name,
+                                    Completed = st.Completed,
+                                    TaskId = c.TaskId
+                                }).ToList(),
                     })
             };
         }
@@ -39,16 +47,8 @@ namespace KanbanBoard.API.Mappers
             return columns.Select(column => new SimplifiedColumn
             {
                 ColumnId = column.ColumnId,
-                Name= column.Name,  
-                Tasks = column.Tasks.Select(c =>
-                    new SimplifiedTask
-                    {
-                        TaskId = c.TaskId,
-                        Title = c.Title,
-                        Description = c.Description,
-                        ColumnId = column.ColumnId,
-                        ColumnName = column.Name,
-                    })
+                Name = column.Name,
+                Tasks = column.Tasks.Select(c => c.ToSimplifiedTask())
             }).ToList();
         }
 

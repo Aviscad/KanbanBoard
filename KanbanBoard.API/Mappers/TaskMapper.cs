@@ -1,7 +1,5 @@
-﻿using KanbanBoard.API.Models.Boards;
-using KanbanBoard.API.Models.Columns;
+﻿using KanbanBoard.API.Models.SubTasks;
 using KanbanBoard.API.Models.Tasks;
-using KanbanBoard.Domain.Entities;
 using Task = KanbanBoard.Domain.Entities.Task;
 
 namespace KanbanBoard.API.Mappers
@@ -27,21 +25,19 @@ namespace KanbanBoard.API.Mappers
                 Description = task.Description,
                 ColumnId = task.ColumnId,
                 ColumnName = task.Column.Name, 
-                SubTasks = task.SubTasks.ToList()
+                SubTasks = task.SubTasks.Select(st=> new SubTaskDto
+                {
+                    SubTaskId = st.SubTaskId,
+                    Name = st.Name,
+                    Completed = st.Completed,
+                    TaskId = st.TaskId
+                }).ToList()
             };
         }
 
         public static List<SimplifiedTask> ToSimplifiedTaskList(this IEnumerable<Task> tasks)
         {
-            return tasks.Select(task => new SimplifiedTask
-            {
-                TaskId = task.TaskId,
-                Title = task.Title,
-                Description = task.Description,
-                ColumnId = task.ColumnId,
-                ColumnName = task.Column.Name,
-                SubTasks = task.SubTasks.ToList()
-            }).ToList();
+            return tasks.Select(task => task.ToSimplifiedTask()).ToList();
         }
 
         public static Task ToTask(this CreateTaskDto createTaskDto)
