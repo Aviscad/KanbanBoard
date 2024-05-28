@@ -13,12 +13,18 @@ namespace KanbanBoard.DataAccess.Repositories
 
         public IEnumerable<Column> GetAllIncludes()
         {
-            return _context.Columns.Include(c => c.Tasks).ToList();
+            return _context.Columns
+                .Include(c => c.Tasks)
+                .ThenInclude(st => st.SubTasks)
+                .ToList();
         }
 
         public Column? GetOneIncludes(int id)
         {
-            return _context.Columns.Include(c => c.Tasks).FirstOrDefault(c => c.ColumnId == id);
+            return _context.Columns
+                .Include(c => c.Tasks)
+                .ThenInclude(st => st.SubTasks)
+                .FirstOrDefault(c => c.ColumnId == id);
         }
     }
 }
