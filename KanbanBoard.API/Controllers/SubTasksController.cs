@@ -18,7 +18,8 @@ namespace KanbanBoard.API.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll() {
+        public IActionResult GetAll()
+        {
             var subtasks = _unitOfWork.SubTask
                 .GetAllIncludes()
                 .ToSimplifiedSubTaskDto();
@@ -27,16 +28,16 @@ namespace KanbanBoard.API.Controllers
 
         [HttpGet]
         [Route("{id:int}")]
-        public IActionResult GetById([FromRoute] int id) 
+        public IActionResult GetById([FromRoute] int id)
         {
-            var subtaskModel =  _unitOfWork.SubTask.GetOneIncludes(id);
-            if(subtaskModel == null) return NotFound();
+            var subtaskModel = _unitOfWork.SubTask.GetOneIncludes(id);
+            if (subtaskModel == null) return NotFound();
 
-            return Ok(subtaskModel.ToSubTaskDto());        
+            return Ok(subtaskModel.ToSubTaskDto());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateSubTaskDto subTask) 
+        public async Task<IActionResult> Create([FromBody] CreateSubTaskDto subTask)
         {
             var subtaskModel = subTask.ToTask();
             await _unitOfWork.SubTask.AddAsync(subtaskModel);
@@ -47,7 +48,7 @@ namespace KanbanBoard.API.Controllers
         [HttpPut]
         [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateSubTaskDto subTaskDto)
-        { 
+        {
             var subtaskModel = await _unitOfWork.SubTask.GetByIdAsync(id);
             if (subtaskModel == null) return NotFound();
 
@@ -63,10 +64,10 @@ namespace KanbanBoard.API.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int id) 
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var subtaskModel = await _unitOfWork.SubTask.GetByIdAsync(id);
-            if(subtaskModel == null) return NotFound();
+            if (subtaskModel == null) return NotFound();
 
             _unitOfWork.SubTask.Remove(subtaskModel);
             await _unitOfWork.SaveAsync();

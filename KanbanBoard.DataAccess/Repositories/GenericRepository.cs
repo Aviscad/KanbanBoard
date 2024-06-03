@@ -7,7 +7,7 @@ namespace KanbanBoard.DataAccess.Repositories
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        public readonly KanbanDbContext _context;
+        protected readonly KanbanDbContext _context;
         private readonly DbSet<T> _dbSet;
 
         public GenericRepository(KanbanDbContext context)
@@ -22,7 +22,7 @@ namespace KanbanBoard.DataAccess.Repositories
 
         public async Task<T> AddAsync(T entity)
         {
-           await _dbSet.AddAsync(entity);
+            await _dbSet.AddAsync(entity);
             return entity;
         }
 

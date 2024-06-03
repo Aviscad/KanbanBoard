@@ -10,10 +10,10 @@ namespace KanbanBoard.API.Mappers
         {
             return new TaskDto
             {
-               ColumnId = task.ColumnId,
-               Description = task.Description,
-               Title = task.Title,
-               SubTasks = task.SubTasks
+                ColumnId = task.ColumnId,
+                Description = task.Description,
+                Title = task.Title,
+                SubTasks = task.SubTasks
             };
         }
         public static SimplifiedTask ToSimplifiedTask(this Task task)
@@ -24,8 +24,8 @@ namespace KanbanBoard.API.Mappers
                 Title = task.Title,
                 Description = task.Description,
                 ColumnId = task.ColumnId,
-                ColumnName = task.Column.Name, 
-                SubTasks = task.SubTasks.Select(st=> new SubTaskDto
+                ColumnName = task.Column.Name,
+                SubTasks = task.SubTasks.Select(st => new SubTaskDto
                 {
                     SubTaskId = st.SubTaskId,
                     Name = st.Name,
@@ -44,7 +44,7 @@ namespace KanbanBoard.API.Mappers
         {
             return new Task
             {
-                ColumnId=createTaskDto.ColumnId,
+                ColumnId = createTaskDto.ColumnId,
                 Description = createTaskDto.Description,
                 Title = createTaskDto.Title,
             };

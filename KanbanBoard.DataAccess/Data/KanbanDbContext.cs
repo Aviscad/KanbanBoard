@@ -6,7 +6,7 @@ namespace KanbanBoard.DataAccess.Data
     {
         public KanbanDbContext(DbContextOptions options) : base(options)
         {
-            
+
         }
 
         public DbSet<Board> Boards { get; set; }

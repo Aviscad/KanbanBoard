@@ -32,7 +32,7 @@ namespace KanbanBoard.API.Controllers
         public IActionResult GetById([FromRoute] int id)
         {
             var task = _unitOfWork.Task.GetOneIncludes(id);
-                
+
             if (task == null) return NotFound();
             return Ok(task.ToSimplifiedTask());
         }
@@ -50,7 +50,7 @@ namespace KanbanBoard.API.Controllers
 
         [HttpPut]
         [Route("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateTaskDto taskDto) 
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateTaskDto taskDto)
         {
             var taskModel = await _unitOfWork.Task.GetByIdAsync(id);
             if (taskModel == null) return NotFound();
@@ -67,10 +67,10 @@ namespace KanbanBoard.API.Controllers
 
         [HttpDelete]
         [Route("{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int id) 
+        public async Task<IActionResult> Delete([FromRoute] int id)
         {
             var taskModel = await _unitOfWork.Task.GetByIdAsync(id);
-            if(taskModel == null) return NotFound();
+            if (taskModel == null) return NotFound();
 
             _unitOfWork.Task.Remove(taskModel);
             await _unitOfWork.SaveAsync();

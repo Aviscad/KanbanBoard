@@ -1,4 +1,5 @@
 ﻿using KanbanBoard.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace KanbanBoard.API.Models.Boards
 {

@@ -12,10 +12,10 @@ namespace KanbanBoard.Domain.Interfaces
         IEnumerable<T>? Find(Expression<Func<T, bool>> predicate);
         void Add(T entity);
         Task<T> AddAsync(T entity);
-        void Update(T entity); 
+        void Update(T entity);
         void AddRange(IEnumerable<T> entities);
         void Remove(T entity);
         void RemoveRange(IEnumerable<T> entities);
     }
-    
+
 }

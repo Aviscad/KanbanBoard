@@ -26,7 +26,8 @@ namespace KanbanBoard.API.Controllers
         }
         [HttpGet]
         [Route("{id:int}")]
-        public IActionResult GetById(int id) {
+        public IActionResult GetById(int id)
+        {
             var column = _unitOfWork.Column
                 .GetOneIncludes(id);
             return column == null ? NotFound() : Ok(column.ToSimplifiedColumn());
@@ -34,7 +35,7 @@ namespace KanbanBoard.API.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateColumnDto columnDto)
-        { 
+        {
             if (columnDto == null) return BadRequest();
             var columnModel = columnDto.ToColumn();
             await _unitOfWork.Column.AddAsync(columnModel);
