@@ -1,3 +1,4 @@
+using KanbanBoard.API.Services;
 using KanbanBoard.DataAccess.Data;
 using KanbanBoard.DataAccess.Repositories;
 using KanbanBoard.Domain.Entities;
@@ -60,8 +61,8 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", app =>
