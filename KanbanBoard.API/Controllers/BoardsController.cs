@@ -1,9 +1,7 @@
 ﻿using KanbanBoard.API.Mappers;
 using KanbanBoard.API.Models.Boards;
-using KanbanBoard.Domain.Entities;
 using KanbanBoard.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanBoard.API.Controllers
