@@ -1,7 +1,9 @@
 ﻿using KanbanBoard.API.Mappers;
 using KanbanBoard.API.Models.Boards;
+using KanbanBoard.Domain.Entities;
 using KanbanBoard.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanBoard.API.Controllers
@@ -12,17 +14,21 @@ namespace KanbanBoard.API.Controllers
     public class BoardsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly UserManager<User> _userManager;
 
-        public BoardsController(IUnitOfWork unitOfWork)
+        public BoardsController(IUnitOfWork unitOfWork, UserManager<User> userManager)
         {
             _unitOfWork = unitOfWork;
+            _userManager = userManager;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
+            var userId = _userManager.GetUserId(HttpContext.User);
+
             var boards = _unitOfWork.Board
-                .GetAllIncludes()
+                .GetAllIncludes(u => u.UserId == userId)
                 .ToSimplifiedBoardList();
             return Ok(boards);
         }
@@ -31,17 +37,24 @@ namespace KanbanBoard.API.Controllers
         [Route("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
-            var board = _unitOfWork.Board.GetOneIncludes(id);
+            var userId = _userManager.GetUserId(HttpContext.User);
+
+            var board = _unitOfWork.Board.GetOneIncludes(id, u => u.UserId == userId);
             if (board == null) return NotFound();
-            return Ok(board);
+            return Ok(board.ToSimplifiedBoard());
         }
 
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateBoardDto boardDto)
         {
-            if (boardDto == null) return BadRequest();
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var userId = _userManager.GetUserId(HttpContext.User);
 
             var boardModel = boardDto.ToBoard();
+
+            boardModel.UserId = userId;
+
             await _unitOfWork.Board.AddAsync(boardModel);
             await _unitOfWork.SaveAsync();
             return CreatedAtAction(nameof(GetById), new { id = boardModel.BoardId }, boardModel.ToSimplifiedBoard());
@@ -51,22 +64,27 @@ namespace KanbanBoard.API.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateBoardDto boardDto)
         {
-            var boardModel = await _unitOfWork.Board.GetByIdAsync(id);
+            var userId = _userManager.GetUserId(HttpContext.User);
+
+            var boardModel = _unitOfWork.Board.GetOneIncludes(id, u => u.UserId == userId);
             if (boardModel == null) return NotFound();
 
             boardModel.Name = boardDto.Name;
 
             _unitOfWork.Board.Update(boardModel);
             await _unitOfWork.SaveAsync();
-            return Ok(boardModel);
+            return Ok(boardModel.ToSimplifiedBoard());
         }
 
         [HttpDelete]
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
-            if (id <= 0) return BadRequest();
-            var boardModel = await _unitOfWork.Board.GetByIdAsync(id);
+            if (!ModelState.IsValid) return BadRequest();
+
+            var userId = _userManager.GetUserId(HttpContext.User);
+
+            var boardModel = _unitOfWork.Board.GetOneIncludes(id, u => u.UserId == userId);
 
             if (boardModel == null) return NotFound();
 

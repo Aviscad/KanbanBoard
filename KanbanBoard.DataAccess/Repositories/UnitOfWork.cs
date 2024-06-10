@@ -1,5 +1,6 @@
 ﻿using KanbanBoard.DataAccess.Data;
 using KanbanBoard.Domain.Interfaces;
+using Task = System.Threading.Tasks.Task;
 
 namespace KanbanBoard.DataAccess.Repositories
 {
