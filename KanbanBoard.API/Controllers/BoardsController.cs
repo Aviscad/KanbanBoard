@@ -1,13 +1,14 @@
 ﻿using KanbanBoard.API.Mappers;
 using KanbanBoard.API.Models.Boards;
 using KanbanBoard.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace KanbanBoard.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class BoardsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

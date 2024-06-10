@@ -1,12 +1,14 @@
 ﻿using KanbanBoard.API.Mappers;
 using KanbanBoard.API.Models.Columns;
 using KanbanBoard.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanBoard.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ColumnController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
