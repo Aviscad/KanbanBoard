@@ -6,8 +6,8 @@ using System.Linq;
 
 namespace KanbanBoard.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class BoardsController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;

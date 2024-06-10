@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace KanbanBoard.API.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class ColumnController : ControllerBase
     {
         private readonly IUnitOfWork _unitOfWork;
