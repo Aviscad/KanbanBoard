@@ -65,8 +65,7 @@ namespace KanbanBoard.API.Mappers
         {
             return new Column
             {
-                Name = updateColumnDto.Name,
-                BoardId = updateColumnDto.BoardId,
+                Name = updateColumnDto.Name
             };
         }
     }
