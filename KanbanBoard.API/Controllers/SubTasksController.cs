@@ -31,6 +31,8 @@ namespace KanbanBoard.API.Controllers
         [Route("{id:int}")]
         public IActionResult GetById([FromRoute] int id)
         {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
             var subtaskModel = _unitOfWork.SubTask.GetOneIncludes(id);
             if (subtaskModel == null) return NotFound();
 
@@ -40,6 +42,8 @@ namespace KanbanBoard.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateSubTaskDto subTask)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
             var subtaskModel = subTask.ToTask();
             await _unitOfWork.SubTask.AddAsync(subtaskModel);
             await _unitOfWork.SaveAsync();
@@ -50,6 +54,8 @@ namespace KanbanBoard.API.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateSubTaskDto subTaskDto)
         {
+            if (!ModelState.IsValid) return BadRequest(ModelState); 
+
             var subtaskModel = await _unitOfWork.SubTask.GetByIdAsync(id);
             if (subtaskModel == null) return NotFound();
 
@@ -67,6 +73,8 @@ namespace KanbanBoard.API.Controllers
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
             var subtaskModel = await _unitOfWork.SubTask.GetByIdAsync(id);
             if (subtaskModel == null) return NotFound();
 
