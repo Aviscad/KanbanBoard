@@ -72,16 +72,22 @@ namespace KanbanBoard.API.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            var id = _userManager.GetUserId(User);
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == loginDto.UserName.ToLower());
 
-            if (user == null) return Unauthorized();
-
-            var result = await _singInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
-
-            if (!result.Succeeded) return Unauthorized();
+            if (
+                user == null ||
+                !(await _singInManager
+                    .CheckPasswordSignInAsync(
+                        user,
+                        loginDto.Password,
+                        false
+                    )).Succeeded
+                )
+            {
+                return Unauthorized();
+            }
 
             var token = _tokenService.CreateToken(user);
 
