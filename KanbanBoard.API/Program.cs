@@ -4,6 +4,7 @@ using KanbanBoard.DataAccess.Repositories;
 using KanbanBoard.Domain.Entities;
 using KanbanBoard.Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -100,8 +101,16 @@ builder.Services.AddCors(options =>
         app
         .WithOrigins("*")
         .AllowAnyHeader()
-        .AllowAnyMethod();
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
+});
+
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.MinimumSameSitePolicy = SameSiteMode.Strict;
+    options.HttpOnly = HttpOnlyPolicy.None;
+    options.Secure = CookieSecurePolicy.Always;
 });
 
 var app = builder.Build();
@@ -120,8 +129,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors("AllowAll");
-
-app.UseAuthorization();
 
 app.MapControllers();
 

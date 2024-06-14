@@ -83,16 +83,25 @@ namespace KanbanBoard.API.Controllers
 
             if (!result.Succeeded) return Unauthorized("No se pudo ingresar!");
 
+            var token = _tokenService.CreateToken(user);
+
+            Response.Cookies.Append("jwt", token, new CookieOptions
+            {
+                HttpOnly = false,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(7)
+            });
+
             return Ok(
                  new NewUserDto
                  {
                      UserName = user.UserName,
                      Email = user.Email,
-                     Token = _tokenService.CreateToken(user)
+                     Token = token
                  }
-                );
+           );
         }
-
 
         [HttpPost("ChangePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePassword changePassword)
