@@ -22,7 +22,7 @@ namespace KanbanBoard.API.Controllers
             _singInManager = singInManager;
         }
 
-        [HttpPost("register")]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
             try
@@ -69,7 +69,7 @@ namespace KanbanBoard.API.Controllers
             }
         }
 
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             var id = _userManager.GetUserId(User);
@@ -77,11 +77,11 @@ namespace KanbanBoard.API.Controllers
 
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.UserName == loginDto.UserName.ToLower());
 
-            if (user == null) return Unauthorized("No se pudo ingresar!");
+            if (user == null) return Unauthorized();
 
             var result = await _singInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
-            if (!result.Succeeded) return Unauthorized("No se pudo ingresar!");
+            if (!result.Succeeded) return Unauthorized();
 
             var token = _tokenService.CreateToken(user);
 
@@ -118,7 +118,7 @@ namespace KanbanBoard.API.Controllers
 
             if (user == null)
             {
-                return NotFound("User not found");
+                return NotFound();
             }
 
             var result = await _userManager.ChangePasswordAsync(user, changePassword.OldPassword, changePassword.NewPassword);
@@ -132,7 +132,28 @@ namespace KanbanBoard.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            return Ok(new { Message = "Password changed successfully" });
+            return Ok();
+        }
+
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout()
+        {
+            try
+            {
+                Response.Cookies.Append("jwt", "", new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddDays(-1)
+                });
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
         }
 
     }
