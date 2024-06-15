@@ -1,6 +1,7 @@
 ﻿using KanbanBoard.API.Models.Account;
 using KanbanBoard.Domain.Entities;
 using KanbanBoard.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -91,13 +92,13 @@ namespace KanbanBoard.API.Controllers
 
             var token = _tokenService.CreateToken(user);
 
-            Response.Cookies.Append("jwt", token, new CookieOptions
-            {
-                HttpOnly = false,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddDays(7)
-            });
+            //Response.Cookies.Append("jwt", token, new CookieOptions
+            //{
+            //    HttpOnly = true,
+            //    Secure = true,
+            //    SameSite = SameSiteMode.None,
+            //    Expires = DateTime.UtcNow.AddDays(7)
+            //});
 
             return Ok(
                  new NewUserDto
@@ -142,17 +143,17 @@ namespace KanbanBoard.API.Controllers
         }
 
         [HttpPost("Logout")]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
             try
             {
-                Response.Cookies.Append("jwt", "", new CookieOptions
-                {
-                    HttpOnly = false,
-                    Secure = true,
-                    SameSite = SameSiteMode.None,
-                    Expires = DateTime.UtcNow.AddDays(-1)
-                });
+                //Response.Cookies.Append("jwt", "", new CookieOptions
+                //{
+                //    HttpOnly = true,
+                //    Secure = true,
+                //    SameSite = SameSiteMode.None,
+                //    Expires = DateTime.UtcNow.AddDays(-1)
+                //});
 
                 return Ok();
             }
@@ -162,5 +163,11 @@ namespace KanbanBoard.API.Controllers
             }
         }
 
+        [HttpPost("Validate")]
+        [Authorize]
+        public IActionResult ValidateToken()
+        {
+            return Ok(new { message = "Token is valid" });
+        }
     }
 }

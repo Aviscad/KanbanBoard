@@ -4,7 +4,7 @@ using KanbanBoard.DataAccess.Repositories;
 using KanbanBoard.Domain.Entities;
 using KanbanBoard.Domain.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.CookiePolicy;
+//using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -106,12 +106,12 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    options.MinimumSameSitePolicy = SameSiteMode.Strict;
-    options.HttpOnly = HttpOnlyPolicy.None;
-    options.Secure = CookieSecurePolicy.Always;
-});
+//builder.Services.Configure<CookiePolicyOptions>(options =>
+//{
+//    options.MinimumSameSitePolicy = SameSiteMode.Strict;
+//    options.HttpOnly = HttpOnlyPolicy.None;
+//    options.Secure = CookieSecurePolicy.Always;
+//});
 
 var app = builder.Build();
 
@@ -124,11 +124,13 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+//app.UseCookiePolicy();
+
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
 
 app.UseAuthorization();
-
-app.UseCors("AllowAll");
 
 app.MapControllers();
 
