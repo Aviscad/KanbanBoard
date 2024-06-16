@@ -1,6 +1,6 @@
 ﻿using KanbanBoard.Domain.Entities;
 
-namespace KanbanBoard.Domain.Interfaces
+namespace KanbanBoard.API.Services
 {
     public interface ITokenService
     {

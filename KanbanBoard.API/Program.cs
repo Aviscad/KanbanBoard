@@ -94,6 +94,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", app =>
