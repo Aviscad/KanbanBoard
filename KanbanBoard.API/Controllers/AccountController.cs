@@ -7,9 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Linq;
-using System.Net;
-using System.Net.Mail;
+using System.IO;
 
 namespace KanbanBoard.API.Controllers
 {
@@ -61,11 +59,19 @@ namespace KanbanBoard.API.Controllers
                         var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                         var confirmationLink = Url.Action(nameof(ConfirmEmail), "Account", new { emailToken, email = user.Email }, Request.Scheme);
 
+
+                        var relativeTemplatePath = Path.Combine(Directory.GetCurrentDirectory(),"Models", "Email", "ConfirmEmailTemplate.html");
+
+                        var emailTemplate = System.IO.File.ReadAllText(relativeTemplatePath);
+
+                        var emailBody = emailTemplate
+                            .Replace("@Model.ConfirmationLink", confirmationLink);
+
                         var emailModel = new EmailModel
                         {
                             ToEmail = registerDto.Email,
                             Subject = "Confirm your email",
-                            Body = confirmationLink
+                            Body = emailBody
                         };
 
                         _emailService.SendEmail(emailModel);
