@@ -65,7 +65,8 @@ builder.Services.AddIdentity<User, IdentityRole>(option =>
     option.Password.RequireNonAlphanumeric = true;
     option.Password.RequiredLength = 8;
 })
-.AddEntityFrameworkStores<KanbanDbContext>();
+.AddEntityFrameworkStores<KanbanDbContext>()
+.AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
 {

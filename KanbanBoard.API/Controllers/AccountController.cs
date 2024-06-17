@@ -1,10 +1,15 @@
-﻿using KanbanBoard.API.Models.Account;
+﻿using KanbanBoard.API.Models;
+using KanbanBoard.API.Models.Account;
+using KanbanBoard.API.Services;
 using KanbanBoard.Domain.Entities;
 using KanbanBoard.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+using System.Net;
+using System.Net.Mail;
 
 namespace KanbanBoard.API.Controllers
 {
@@ -14,13 +19,19 @@ namespace KanbanBoard.API.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly ITokenService _tokenService;
+        private readonly IEmailService _emailService;
         private readonly SignInManager<User> _singInManager;
 
-        public AccountController(UserManager<User> userManager, ITokenService tokenService, SignInManager<User> singInManager)
+        public AccountController(
+            UserManager<User> userManager, 
+            ITokenService tokenService, 
+            SignInManager<User> singInManager,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _singInManager = singInManager;
+            _emailService = emailService;
         }
 
         [HttpPost("Register")]
@@ -29,6 +40,9 @@ namespace KanbanBoard.API.Controllers
             try
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
+
+                var existingUser  = await _userManager.FindByEmailAsync(registerDto.Email);
+                if (existingUser != null) return BadRequest("Email is already in use.");
 
                 var user = new User
                 {
@@ -44,6 +58,18 @@ namespace KanbanBoard.API.Controllers
 
                     if (roleResult.Succeeded)
                     {
+                        var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                        var confirmationLink = Url.Action(nameof(ConfirmEmail), "Account", new { emailToken, email = user.Email }, Request.Scheme);
+
+                        var emailModel = new EmailModel
+                        {
+                            ToEmail = registerDto.Email,
+                            Subject = "Confirm your email",
+                            Body = confirmationLink
+                        };
+
+                        _emailService.SendEmail(emailModel);
+
                         return Ok(
                             new NewUserDto
                             {
@@ -70,6 +96,30 @@ namespace KanbanBoard.API.Controllers
             }
         }
 
+        [HttpGet("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail([FromQuery]string emailToken, [FromQuery]string email)
+        {
+            if (string.IsNullOrEmpty(emailToken) || string.IsNullOrEmpty(email))
+            {
+                return BadRequest("Invalid email confirmation request.");
+            }
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+            {
+                return BadRequest("Invalid email confirmation request.");
+            }
+            if (user.EmailConfirmed) return BadRequest("Email is already confirmed.");
+
+            var result = await _userManager.ConfirmEmailAsync(user, emailToken);
+            if (result.Succeeded)
+            {
+                return Ok("Email confirmed successfully.");
+            }
+
+            return BadRequest("Email confirmation failed.");
+        }
+        
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
