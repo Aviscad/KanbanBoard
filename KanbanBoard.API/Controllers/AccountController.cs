@@ -18,17 +18,20 @@ namespace KanbanBoard.API.Controllers
         private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
         private readonly SignInManager<User> _singInManager;
+        private readonly IConfiguration _configuration;
 
         public AccountController(
-            UserManager<User> userManager, 
-            ITokenService tokenService, 
+            UserManager<User> userManager,
+            ITokenService tokenService,
             SignInManager<User> singInManager,
-            IEmailService emailService)
+            IEmailService emailService,
+            IConfiguration configuration)
         {
             _userManager = userManager;
             _tokenService = tokenService;
             _singInManager = singInManager;
             _emailService = emailService;
+            _configuration = configuration;
         }
 
         [HttpPost("Register")]
@@ -38,7 +41,7 @@ namespace KanbanBoard.API.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
 
-                var existingUser  = await _userManager.FindByEmailAsync(registerDto.Email);
+                var existingUser = await _userManager.FindByEmailAsync(registerDto.Email);
                 if (existingUser != null) return BadRequest("Email is already in use.");
 
                 var user = new User
@@ -56,10 +59,19 @@ namespace KanbanBoard.API.Controllers
                     if (roleResult.Succeeded)
                     {
                         var emailToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                        var confirmationLink = Url.Action(nameof(ConfirmEmail), "Account", new { emailToken, email = user.Email }, Request.Scheme);
+                        var confirmationLink = Url.Action(
+                            nameof(ConfirmEmail),
+                            "Account",
+                            new { emailToken, email = user.Email },
+                            Request.Scheme
+                        );
 
-
-                        var relativeTemplatePath = Path.Combine(Directory.GetCurrentDirectory(),"Models", "Email", "ConfirmEmailTemplate.html");
+                        var relativeTemplatePath = Path.Combine(
+                            Directory.GetCurrentDirectory(),
+                            "Models",
+                            "Email",
+                            "ConfirmEmailTemplate.html"
+                        );
 
                         var emailTemplate = System.IO.File.ReadAllText(relativeTemplatePath);
 
@@ -73,7 +85,9 @@ namespace KanbanBoard.API.Controllers
                             Body = emailBody
                         };
 
-                        _emailService.SendEmail(emailModel);
+                        var emailResponse = _emailService.SendEmail(emailModel);
+
+                        if (!emailResponse.Success) return BadRequest(emailResponse.Message);
 
                         return Ok(
                             new NewUserDto
@@ -102,7 +116,7 @@ namespace KanbanBoard.API.Controllers
         }
 
         [HttpGet("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail([FromQuery]string emailToken, [FromQuery]string email)
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string emailToken, [FromQuery] string email)
         {
             if (string.IsNullOrEmpty(emailToken) || string.IsNullOrEmpty(email))
             {
@@ -124,7 +138,7 @@ namespace KanbanBoard.API.Controllers
 
             return BadRequest("Email confirmation failed.");
         }
-        
+
         [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
@@ -168,8 +182,6 @@ namespace KanbanBoard.API.Controllers
         [HttpPost("ChangePassword")]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePassword changePassword)
         {
-
-
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
@@ -195,6 +207,77 @@ namespace KanbanBoard.API.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPost("ForgotPassword")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPassword)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var user = await _userManager.FindByEmailAsync(forgotPassword.Email);
+            if (user == null) return BadRequest("Invalid email address");
+
+            if (!user.EmailConfirmed) return BadRequest("Email Address is not verified");
+
+            try
+            {
+
+                var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+
+                var frontendURL = _configuration["JWT:Audience"];
+                var resetLink = $"{frontendURL}/resetpassword?t={resetToken}&email={user.Email}";
+
+                var emailTemplatePath = Path.Combine(
+                    Directory.GetCurrentDirectory(),
+                    "Models",
+                    "Email",
+                    "ResetPasswordTemplate.html"
+                );
+
+                var emailTemplate = System.IO.File.ReadAllText(emailTemplatePath);
+
+                var emailBody = emailTemplate
+                    .Replace("@Model.ResetLink", resetLink);
+
+                var emailModel = new EmailModel
+                {
+                    ToEmail = user.Email,
+                    Subject = "Reset your password",
+                    Body = emailBody
+                };
+
+                var emailResponse = _emailService.SendEmail(emailModel);
+                if (!emailResponse.Success) return BadRequest(emailResponse.Message);
+
+                return Ok(emailResponse.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex);
+            }
+        }
+
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+
+            var user = await _userManager.FindByEmailAsync(resetPasswordDto.Email);
+
+            if (!user.EmailConfirmed) return BadRequest("Email Address is not verified");
+
+            if (user == null) return BadRequest("Invalid email address.");
+
+            var result = await _userManager.ResetPasswordAsync(
+                user,
+                resetPasswordDto.Token,
+                resetPasswordDto.NewPassword
+            );
+
+            if (!result.Succeeded) return BadRequest("Could not change the password");
+
+            return Ok("Password reset successful");
         }
 
         [HttpPost("Logout")]
